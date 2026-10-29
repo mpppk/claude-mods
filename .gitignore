@@ -1,0 +1,5 @@
+# Written by Claude Code each time it loads a mod; never committed.
+mods/*/.claude-plugin/types/
+.mcpb-cache/
+.DS_Store
+*.log

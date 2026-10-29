@@ -1,0 +1,16 @@
+{
+  "name": "claude-mods",
+  "owner": {
+    "name": "mpppk"
+  },
+  "metadata": {
+    "description": "Claude Code mods by mpppk"
+  },
+  "plugins": [
+    {
+      "name": "cache-timer",
+      "source": "./mods/cache-timer",
+      "description": "Shows how long this session's prompt cache stays warm, quietly, in the status line."
+    }
+  ]
+}

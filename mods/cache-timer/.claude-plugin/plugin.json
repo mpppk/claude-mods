@@ -1,0 +1,22 @@
+{
+  "name": "cache-timer",
+  "version": "0.1.0",
+  "description": "Shows how long this session's prompt cache stays warm, quietly, in the status line.",
+  "author": {
+    "name": "mpppk"
+  },
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "ttl": {
+      "type": "string",
+      "title": "Cache TTL",
+      "description": "auto: learn the TTL from what Claude Code reports; 5m / 1h: fix it.",
+      "default": "auto",
+      "options": [
+        "auto",
+        "5m",
+        "1h"
+      ]
+    }
+  }
+}
