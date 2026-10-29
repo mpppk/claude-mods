@@ -44,10 +44,10 @@ async function step($: Engine, agentId?: string) {
 test('labels stay short', () => {
   expect(label(4 * 60_000 + 59_000)).toBe('⏳4m')
   expect(label(59_000)).toBe('⏳<1m')
-  expect(label(0)).toBe('⌛cold')
+  expect(label(0)).toBe(undefined)
 })
 
-test('a cached request starts the countdown, which runs down to cold', async ($, on) => {
+test('a cached request starts the countdown, which runs down and disappears', async ($, on) => {
   const { clock, status } = engine(on)
   await $.session.start({ cwd: '/', surface: 'terminal', isInteractive: true })
   expect(status.text).toBe(undefined)
@@ -62,7 +62,7 @@ test('a cached request starts the countdown, which runs down to cold', async ($,
   expect(status.text).toBe('⏳<1m')
 
   await clock.advance(55_000)
-  expect(status.text).toBe('⌛cold')
+  expect(status.text).toBe(undefined)
 })
 
 test('a subagent request or one without cache use leaves the countdown alone', async ($, on) => {
@@ -89,7 +89,7 @@ test('a fixed 1h TTL counts down from an hour', { options: { ttl: '1h' } }, asyn
   expect(status.text).toBe('⏳60m')
 })
 
-test('the TTL the engine names on a model switch is kept, and the switch leaves the cache cold', async ($, on) => {
+test('the TTL the engine names on a model switch is kept, and the switch clears the countdown', async ($, on) => {
   const { status } = engine(on)
   await $.session.start({ cwd: '/', surface: 'terminal', isInteractive: true })
   await step($)
@@ -106,7 +106,7 @@ test('the TTL the engine names on a model switch is kept, and the switch leaves 
     estimated_cache_write_usd: 0.1,
     pricing: 'catalog',
   })
-  expect(status.text).toBe('⌛cold')
+  expect(status.text).toBe(undefined)
 
   await step($)
   expect(status.text).toBe('⏳60m')
@@ -151,7 +151,7 @@ test('a TTL learned from the cache carries into later countdowns', async ($, on)
   respondWith({ ...USAGE, cache_read_input_tokens: 21_000, cache_creation_input_tokens: 30_000 })
   await step($) // 51,050 prompt tokens, read warm
   await clock.advance(10 * 60_000)
-  expect(status.text).toBe('⌛cold')
+  expect(status.text).toBe(undefined)
 
   respondWith({ ...USAGE, cache_read_input_tokens: 51_000, cache_creation_input_tokens: 500 })
   await step($) // the whole prefix was still there after 10 minutes
