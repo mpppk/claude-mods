@@ -1,6 +1,6 @@
 {
   "name": "cache-timer",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Shows how long this session's prompt cache stays warm, quietly, in the status line.",
   "author": {
     "name": "mpppk"

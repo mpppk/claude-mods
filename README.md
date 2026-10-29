@@ -6,7 +6,7 @@ Claude Code の mod（function hooks で動くプラグイン）を集めたリ�
 
 | mod | 内容 |
 | --- | --- |
-| [cache-timer](mods/cache-timer) | プロンプトキャッシュの残り時間を控えめに表示（ターミナルはステータス行、Desktop は入力欄の上） |
+| [cache-timer](mods/cache-timer) | プロンプトキャッシュの残り時間をステータス行に `⏳3m` のように表示 |
 
 ## インストール
 
@@ -33,7 +33,7 @@ claude plugin install cache-timer --marketplace mpppk/claude-mods
 mods/<mod>/                       mod 1 つ = プラグイン 1 つ
   .claude-plugin/plugin.json      マニフェスト
   hooks/hooks.json                hooks モジュールの指定
-  hooks/register.ts(x)            hooks モジュール本体（JSX で描くなら .tsx）
+  hooks/register.ts               hooks モジュール本体（JSX で描くなら .tsx）
   types/index.d.ts                $.state の型契約（使う mod のみ）
   tests/*.test.ts                 claude plugin test で走るテスト
   README.md

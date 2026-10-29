@@ -6,13 +6,12 @@ const lastHitAt = { plugin: 'cache-timer', key: 'lastHitAt' } as const
 const lastPromptTokens = { plugin: 'cache-timer', key: 'lastPromptTokens' } as const
 const firstPromptTokens = { plugin: 'cache-timer', key: 'firstPromptTokens' } as const
 const learnedTtl = { plugin: 'cache-timer', key: 'ttl' } as const
-const shownLabel = { plugin: 'cache-timer', key: 'label' } as const
 
 const TICK_MS = 5_000
 
 /** The TTL the user fixed in the mod's options; undefined under `auto`. */
 let fixedTtl: CacheTtl | undefined
-/** What the terminal's status line holds now, so a tick that changes nothing draws nothing. */
+/** What the status line holds now, so a tick that changes nothing draws nothing. */
 let shown: string | undefined
 
 async function currentTtl($: EngineInterface): Promise<CacheTtl> {
@@ -31,9 +30,6 @@ async function learn($: EngineInterface, value: CacheTtl) {
 async function refresh($: EngineInterface) {
   const { value: at = 0 } = await $.state.get(lastHitAt)
   const text = at === 0 ? undefined : label(at + TTL_MS[await currentTtl($)] - (await $.clock.now()))
-  // The band redraws when the label changes; the terminal's status line is pinned anew.
-  const { value: drawn = '' } = await $.state.get(shownLabel)
-  if (drawn !== (text ?? '')) await $.state.set(shownLabel, text ?? '')
   if (text === shown) return
   shown = text
   $.ui.status(text)
@@ -107,14 +103,4 @@ export const register: Register = (on, options) => {
     await refresh($)
     return next(e)
   }).catch(($, e, next) => next(e))
-
-  // The desktop app draws no status line: there the label sits in the band
-  // above the prompt, dim, and yields to a survey.
-  on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
-    if (e.surface !== 'desktop' || e.props.hasSurvey) return next(e)
-    const { value: text = '' } = await $.state.get(shownLabel)
-    if (text === '') return next(e)
-    const { Text } = $.ui.resolve(e)
-    return <Text dimColor>{text}</Text>
-  })
 }
