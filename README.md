@@ -55,3 +55,7 @@ scripts/check.sh
 ```
 
 新しい mod の追加手順は [CLAUDE.md](CLAUDE.md) にまとめています。
+
+## ライセンス
+
+[MIT](LICENSE)

@@ -6,7 +6,7 @@ Claude Code の mod（function hooks のプラグイン）を複数置くリポ�
 
 1. `mods/<name>/` を作る。`<name>` は小文字・数字・ハイフンのみで、フォルダ名・`plugin.json` の `name`・marketplace のエントリ名をそろえる。
 2. 最低限のファイル:
-   - `.claude-plugin/plugin.json`: `name` / `version` / `description` / `author`。`$.state` を使うなら `"types": "./types/index.d.ts"`、設定があるなら `userConfig`。
+   - `.claude-plugin/plugin.json`: `name` / `version` / `description` / `author` / `license`（`MIT`）。`$.state` を使うなら `"types": "./types/index.d.ts"`、設定があるなら `userConfig`。
    - `hooks/hooks.json`: `{ "modules": ["./register.ts"] }`
    - `hooks/register.ts`: `export const register: Register = (on, options) => { ... }`
    - `tsconfig.json`: `{ "extends": "./.claude-plugin/types/tsconfig.json" }`
