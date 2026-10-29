@@ -8,8 +8,8 @@ export const TTL_MS: Record<CacheTtl, number> = {
 /** How the cache reads in the status line: short enough to sit beside the engine's own notices; nothing once it has lapsed. */
 export function label(remainingMs: number): string | undefined {
   if (remainingMs <= 0) return undefined
-  if (remainingMs < 60_000) return '⏳<1m'
-  return `⏳${Math.floor(remainingMs / 60_000)}m`
+  if (remainingMs < 60_000) return '🟢<1m'
+  return `🟢${Math.floor(remainingMs / 60_000)}m`
 }
 
 export type Observation = {

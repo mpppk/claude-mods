@@ -6,7 +6,7 @@ Claude Code の mod（function hooks で動くプラグイン）を集めたリ�
 
 | mod | 内容 |
 | --- | --- |
-| [cache-timer](mods/cache-timer) | プロンプトキャッシュの残り時間をステータス行に `⏳3m` のように表示 |
+| [cache-timer](mods/cache-timer) | プロンプトキャッシュの残り時間をステータス行に `🟢3m` のように表示 |
 
 ## インストール
 

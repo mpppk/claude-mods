@@ -42,8 +42,8 @@ async function step($: Engine, agentId?: string) {
 }
 
 test('labels stay short', () => {
-  expect(label(4 * 60_000 + 59_000)).toBe('⏳4m')
-  expect(label(59_000)).toBe('⏳<1m')
+  expect(label(4 * 60_000 + 59_000)).toBe('🟢4m')
+  expect(label(59_000)).toBe('🟢<1m')
   expect(label(0)).toBe(undefined)
 })
 
@@ -53,13 +53,13 @@ test('a cached request starts the countdown, which runs down and disappears', as
   expect(status.text).toBe(undefined)
 
   await step($)
-  expect(status.text).toBe('⏳5m')
+  expect(status.text).toBe('🟢5m')
 
   await clock.advance(65_000)
-  expect(status.text).toBe('⏳3m')
+  expect(status.text).toBe('🟢3m')
 
   await clock.advance(3 * 60_000)
-  expect(status.text).toBe('⏳<1m')
+  expect(status.text).toBe('🟢<1m')
 
   await clock.advance(55_000)
   expect(status.text).toBe(undefined)
@@ -70,30 +70,30 @@ test('a subagent request or one without cache use leaves the countdown alone', a
   await $.session.start({ cwd: '/', surface: 'terminal', isInteractive: true })
   await step($)
   await clock.advance(4 * 60_000 + 5_000)
-  expect(status.text).toBe('⏳<1m')
+  expect(status.text).toBe('🟢<1m')
 
   await step($, 'agent-1')
-  expect(status.text).toBe('⏳<1m')
+  expect(status.text).toBe('🟢<1m')
 
   respondWith({ ...USAGE, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 })
   await step($)
   respondWith(null)
   await step($)
-  expect(status.text).toBe('⏳<1m')
+  expect(status.text).toBe('🟢<1m')
 })
 
 test('a fixed 1h TTL counts down from an hour', { options: { ttl: '1h' } }, async ($, on) => {
   const { status } = engine(on)
   await $.session.start({ cwd: '/', surface: 'terminal', isInteractive: true })
   await step($)
-  expect(status.text).toBe('⏳60m')
+  expect(status.text).toBe('🟢60m')
 })
 
 test('the TTL the engine names on a model switch is kept, and the switch clears the countdown', async ($, on) => {
   const { status } = engine(on)
   await $.session.start({ cwd: '/', surface: 'terminal', isInteractive: true })
   await step($)
-  expect(status.text).toBe('⏳5m')
+  expect(status.text).toBe('🟢5m')
 
   await $.classic.PostModelSwitch({
     from_model: 'a',
@@ -109,21 +109,21 @@ test('the TTL the engine names on a model switch is kept, and the switch clears 
   expect(status.text).toBe(undefined)
 
   await step($)
-  expect(status.text).toBe('⏳60m')
+  expect(status.text).toBe('🟢60m')
 })
 
 test('a resumed session counts from its last response', async ($, on) => {
   const { status } = engine(on)
   await $.session.start({ cwd: '/', surface: 'terminal', isInteractive: true })
   await $.classic.SessionStart({ source: 'resume', seconds_since_last_response: 130, prompt_cache_likely_expired: false })
-  expect(status.text).toBe('⏳2m')
+  expect(status.text).toBe('🟢2m')
 })
 
 test('a resumed session the engine calls warm past 5 minutes teaches 1h', async ($, on) => {
   const { status } = engine(on)
   await $.session.start({ cwd: '/', surface: 'terminal', isInteractive: true })
   await $.classic.SessionStart({ source: 'resume', seconds_since_last_response: 600, prompt_cache_likely_expired: false })
-  expect(status.text).toBe('⏳50m')
+  expect(status.text).toBe('🟢50m')
 })
 
 test('/clear forgets the countdown', async ($, on) => {
@@ -155,5 +155,5 @@ test('a TTL learned from the cache carries into later countdowns', async ($, on)
 
   respondWith({ ...USAGE, cache_read_input_tokens: 51_000, cache_creation_input_tokens: 500 })
   await step($) // the whole prefix was still there after 10 minutes
-  expect(status.text).toBe('⏳60m')
+  expect(status.text).toBe('🟢60m')
 })
