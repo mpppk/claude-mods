@@ -157,3 +157,43 @@ test('a TTL learned from the cache carries into later countdowns', async ($, on)
   await step($) // the whole prefix was still there after 10 minutes
   expect(status.text).toBe('cache 60m')
 })
+
+const BAND = {
+  plugin: 'cache-timer',
+  component: 'AbovePrompt',
+  requestId: 'above-prompt',
+  props: {
+    hasSurvey: false,
+    isWorking: false,
+    maxRows: 10,
+    bodyColumns: 60,
+    scroll: { offset: 0, bodyRows: 10 },
+    view: {},
+  },
+} as const
+
+test('the desktop app shows the label in the band above the prompt', async ($, on) => {
+  const { clock } = engine(on)
+  // The engine's own band, drawn wherever the mod passes.
+  on('ui.render', ($, e) => {
+    const { Text } = $.ui.resolve(e)
+    return <Text>engine</Text>
+  })
+  await $.session.start({ cwd: '/', surface: 'desktop', isInteractive: true })
+
+  const before = await $.ui.mount({ ...BAND, surface: 'desktop' })
+  expect((await before.find({ type: 'Text' }))?.text).toBe('engine')
+  await before.unmount()
+
+  await step($)
+  const ui = await $.ui.mount({ ...BAND, surface: 'desktop' })
+  expect((await ui.find({ type: 'Text' }))?.text).toBe('cache 5m')
+  await clock.advance(5 * 60_000)
+  expect((await ui.find({ type: 'Text' }))?.text).toBe('cache cold')
+  await ui.unmount()
+
+  // The terminal has the status line; its band stays the engine's.
+  const terminal = await $.ui.mount({ ...BAND, surface: 'terminal' })
+  expect((await terminal.find({ type: 'Text' }))?.text).toBe('engine')
+  await terminal.unmount()
+})

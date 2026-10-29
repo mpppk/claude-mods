@@ -11,6 +11,8 @@ declare module 'claude-code' {
       firstPromptTokens: number
       /** The TTL this session has learned, from the engine or from what the cache did. */
       ttl: CacheTtl
+      /** What the cache reads as now (`cache 4m`); empty before the first cached request. */
+      label: string
     }
   }
 }
